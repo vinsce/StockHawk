@@ -52,6 +52,8 @@
             android:label="@string/title_widget_list">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="com.udacity.stockhawk.ACTION_DATA_UPDATED"/>
+                <action android:name="com.udacity.stockhawk.ACTION_ITEM_DELETED"/>
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

@@ -32,6 +32,7 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
         StockAdapter.StockAdapterOnClickHandler {
+    public static final String ACTION_ITEM_DELETED = "com.udacity.stockhawk.ACTION_ITEM_DELETED";
 
     private static final int STOCK_LOADER = 0;
     @SuppressWarnings("WeakerAccess")
@@ -82,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String symbol = adapter.getSymbolAtPosition(viewHolder.getAdapterPosition());
                 PrefUtils.removeStock(MainActivity.this, symbol);
                 getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
+
+                //notify the widgets
+                Intent dataUpdatedIntent = new Intent(ACTION_ITEM_DELETED);
+                sendBroadcast(dataUpdatedIntent);
             }
         }).attachToRecyclerView(stockRecyclerView);
 
