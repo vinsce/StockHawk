@@ -38,6 +38,7 @@
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="?attr/actionBarSize"
+        android:contentDescription="@string/stock_history_graph"
         app:cardBackgroundColor="@android:color/white"
         app:cardElevation="8dp"
         app:cardUseCompatPadding="true"
