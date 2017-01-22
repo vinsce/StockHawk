@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -50,7 +51,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
         mLineChart = (LineChart) findViewById(R.id.chart);
         mLineDataSet = new LineDataSet(new ArrayList<Entry>(), "");
-        graphStyling();
+        styleGraph();
     }
 
     @Override
@@ -94,8 +95,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mLineDataSet.clear();
         for (int i = 0; i < history.size(); i++) {
             Pair<Date, Float> data = history.get(i);
-            mLineDataSet.addEntry(new Entry(i, (float) data.second));
+            mLineDataSet.addEntry(new Entry(i, (float) data.second, DateUtils.formatDateTime(this, data.first.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL)));
         }
+        mLineDataSet.notifyDataSetChanged();
 
         LineData lineData = new LineData(mLineDataSet);
         mLineChart.setData(lineData);
@@ -110,7 +112,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     }
 
     @SuppressWarnings("deprecation")
-    private void graphStyling() {
+    private void styleGraph() {
         mLineDataSet.setMode(LineDataSet.Mode.LINEAR);
         mLineDataSet.setFillAlpha(100);
         mLineDataSet.setDrawFilled(true);
@@ -118,6 +120,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mLineDataSet.setColor(getResources().getColor(R.color.colorAccent));
         mLineDataSet.setDrawCircles(false);
         mLineDataSet.setLineWidth(2);
+        mLineDataSet.setHighLightColor(getResources().getColor(R.color.colorPrimary));
 
         mLineChart.setPinchZoom(false);
         mLineChart.setBackgroundColor(Color.WHITE);
@@ -125,6 +128,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mLineChart.setDescription(null);
         mLineChart.setScaleEnabled(false);
         mLineChart.getLegend().setEnabled(false);
+        mLineChart.setMarker(new HistoryMarkerView(this));
 
         YAxis yAxis = mLineChart.getAxisLeft();
         XAxis xAxis = mLineChart.getXAxis();
