@@ -17,19 +17,19 @@ public final class HistoryUtils {
     private HistoryUtils() {
     }
 
-    public static List<Pair<Date, Double>> parseHistoryFromString(String historyString) {
-        List<Pair<Date, Double>> result = new ArrayList<>(200);
+    public static List<Pair<Date, Float>> parseHistoryFromString(String historyString) {
+        List<Pair<Date, Float>> result = new ArrayList<>(200);
         Scanner sc = new Scanner(historyString);
         sc.useDelimiter("\n");
         String tmp, dateString, valueString;
         Date date;
-        Double value;
+        Float value;
         while (sc.hasNext()) {
             tmp = sc.next();
             dateString = tmp.substring(0, tmp.indexOf(','));
             valueString = tmp.substring(tmp.indexOf(',') + 1);
             date = new Date(Long.parseLong(dateString));
-            value = Double.parseDouble(valueString);
+            value = Float.parseFloat(valueString);
             result.add(new Pair<>(date, value));
         }
         return result;

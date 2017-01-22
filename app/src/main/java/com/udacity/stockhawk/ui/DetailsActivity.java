@@ -2,6 +2,7 @@ package com.udacity.stockhawk.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -12,18 +13,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.HistoryUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int ID_DETAIL_LOADER = 1657;
 
     private LineChart mLineChart;
     private String mSymbol;
+    private LineDataSet mLineDataSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +47,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mSymbol = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         if (mSymbol == null) throw new NullPointerException("Symbol for DetailActivity cannot be null");
 
-        mLineChart = (LineChart) findViewById(R.id.chart);
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
+        mLineChart = (LineChart) findViewById(R.id.chart);
+        mLineDataSet = new LineDataSet(new ArrayList<Entry>(), "");
+        graphStyling();
     }
 
     @Override
@@ -68,12 +81,57 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         setTitle(name);
 
         String historyString = cursor.getString(Contract.Quote.POSITION_HISTORY);
-        List<Pair<Date, Double>> history = HistoryUtils.parseHistoryFromString(historyString);
+        List<Pair<Date, Float>> history = HistoryUtils.parseHistoryFromString(historyString);
         Log.d(DetailsActivity.class.getSimpleName(), historyString);
+
+        Collections.sort(history, new Comparator<Pair<Date, Float>>() {
+            @Override
+            public int compare(Pair<Date, Float> o1, Pair<Date, Float> o2) {
+                return o1.first.compareTo(o2.first);
+            }
+        });
+
+        mLineDataSet.clear();
+        for (int i = 0; i < history.size(); i++) {
+            Pair<Date, Float> data = history.get(i);
+            mLineDataSet.addEntry(new Entry(i, (float) data.second));
+        }
+
+        LineData lineData = new LineData(mLineDataSet);
+        mLineChart.setData(lineData);
+        mLineChart.notifyDataSetChanged();
+        mLineChart.invalidate();
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @SuppressWarnings("deprecation")
+    private void graphStyling() {
+        mLineDataSet.setMode(LineDataSet.Mode.LINEAR);
+        mLineDataSet.setFillAlpha(100);
+        mLineDataSet.setDrawFilled(true);
+        mLineDataSet.setFillColor(getResources().getColor(R.color.colorAccent));
+        mLineDataSet.setColor(getResources().getColor(R.color.colorAccent));
+        mLineDataSet.setDrawCircles(false);
+        mLineDataSet.setLineWidth(2);
+
+        mLineChart.setPinchZoom(false);
+        mLineChart.setBackgroundColor(Color.WHITE);
+        mLineChart.setDoubleTapToZoomEnabled(false);
+        mLineChart.setDescription(null);
+        mLineChart.setScaleEnabled(false);
+        mLineChart.getLegend().setEnabled(false);
+
+        YAxis yAxis = mLineChart.getAxisLeft();
+        XAxis xAxis = mLineChart.getXAxis();
+        xAxis.setEnabled(false);
+        yAxis.setEnabled(false);
+        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+
+        mLineChart.invalidate();
     }
 }
