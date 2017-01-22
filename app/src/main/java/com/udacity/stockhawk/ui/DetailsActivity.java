@@ -25,6 +25,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mSymbol = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         if (mSymbol == null) throw new NullPointerException("Symbol for DetailActivity cannot be null");
 
@@ -55,7 +58,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         }
 
         String symbol = cursor.getString(Contract.Quote.POSITION_SYMBOL);
+        String name = cursor.getString(Contract.Quote.POSITION_NAME);
         Log.d(DetailsActivity.class.getSimpleName(), symbol);
+        setTitle(name);
     }
 
     @Override

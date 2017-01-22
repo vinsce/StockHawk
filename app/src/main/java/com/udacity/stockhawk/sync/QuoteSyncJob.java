@@ -83,6 +83,8 @@ public final class QuoteSyncJob {
                     float change = quote.getChange().floatValue();
                     float percentChange = quote.getChangeInPercent().floatValue();
 
+                    String name = stock.getName();
+
                     // WARNING! Don't request historical data for a stock that doesn't exist!
                     // The request will hang forever X_x
                     List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
@@ -105,6 +107,7 @@ public final class QuoteSyncJob {
 
                     quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
 
+                    quoteCV.put(Contract.Quote.COLUMN_NAME, name);
                     quoteCVs.add(quoteCV);
                 } catch (NullPointerException npe) {
                     //Showing the toast in the main thread if the stock doesn't exist
