@@ -40,7 +40,8 @@
 
         <activity
             android:name=".ui.DetailsActivity"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/DetailsTheme">
         </activity>
     </application>
 
