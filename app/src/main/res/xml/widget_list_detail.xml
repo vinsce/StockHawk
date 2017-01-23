@@ -9,7 +9,7 @@
     android:minResizeHeight="@dimen/widget_list_min_resize_height"
     android:minResizeWidth="@dimen/widget_list_min_resize_width"
     android:minWidth="@dimen/widget_list_default_width"
-    android:previewImage="@mipmap/ic_launcher"
+    android:previewImage="@drawable/widget_preview_list"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen|keyguard"
