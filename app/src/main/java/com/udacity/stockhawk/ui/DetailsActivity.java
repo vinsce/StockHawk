@@ -2,6 +2,7 @@ package com.udacity.stockhawk.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.view.View;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -97,7 +99,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         Collections.sort(history, new Comparator<Pair<Date, Float>>() {
             @Override
             public int compare(Pair<Date, Float> o1, Pair<Date, Float> o2) {
-                return o1.first.compareTo(o2.first);
+                int comparedValue = o1.first.compareTo(o2.first);
+                if (isRTL()) return -comparedValue;
+                return comparedValue;
             }
         });
 
@@ -138,15 +142,17 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mLineChart.setScaleEnabled(false);
         mLineChart.getLegend().setEnabled(false);
         mLineChart.setMarker(new HistoryMarkerView(this));
-        mLineChart.setAutoScaleMinMaxEnabled(true);
-        mLineChart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         YAxis yAxis = mLineChart.getAxisLeft();
         XAxis xAxis = mLineChart.getXAxis();
         xAxis.setEnabled(false);
         yAxis.setEnabled(false);
 
-
         mLineChart.invalidate();
+    }
+
+    private boolean isRTL() {
+        Configuration config = getResources().getConfiguration();
+        return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
     }
 }
