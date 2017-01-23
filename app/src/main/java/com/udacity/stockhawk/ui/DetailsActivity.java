@@ -1,5 +1,6 @@
 package com.udacity.stockhawk.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -12,7 +13,7 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.util.Log;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -38,6 +39,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private String mSymbol;
     private LineDataSet mLineDataSet;
 
+    private TextView mPriceTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
         mLineChart = (LineChart) findViewById(R.id.chart);
         mLineDataSet = new LineDataSet(new ArrayList<Entry>(), "");
+
+        mPriceTextView = (TextView) findViewById(R.id.price);
         styleGraph();
     }
 
@@ -67,6 +72,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         boolean cursorHasValidData = false;
@@ -80,12 +86,13 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
         String symbol = cursor.getString(Contract.Quote.POSITION_SYMBOL);
         String name = cursor.getString(Contract.Quote.POSITION_NAME);
-        Log.d(DetailsActivity.class.getSimpleName(), symbol);
-        setTitle(name);
+        float price = cursor.getFloat(Contract.Quote.POSITION_PRICE);
+
+        setTitle(name + " (" + symbol + ")");
+        mPriceTextView.setText("$" + String.valueOf(price));
 
         String historyString = cursor.getString(Contract.Quote.POSITION_HISTORY);
         List<Pair<Date, Float>> history = HistoryUtils.parseHistoryFromString(historyString);
-        Log.d(DetailsActivity.class.getSimpleName(), historyString);
 
         Collections.sort(history, new Comparator<Pair<Date, Float>>() {
             @Override
