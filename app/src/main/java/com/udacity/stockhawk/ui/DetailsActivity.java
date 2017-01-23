@@ -138,12 +138,14 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mLineChart.setScaleEnabled(false);
         mLineChart.getLegend().setEnabled(false);
         mLineChart.setMarker(new HistoryMarkerView(this));
+        mLineChart.setAutoScaleMinMaxEnabled(true);
+        mLineChart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         YAxis yAxis = mLineChart.getAxisLeft();
         XAxis xAxis = mLineChart.getXAxis();
         xAxis.setEnabled(false);
         yAxis.setEnabled(false);
-        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+
 
         mLineChart.invalidate();
     }
